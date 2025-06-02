@@ -1,0 +1,18 @@
+Javascript ->
+
+- lenguaje interpretado y dinamico
+- las variables pueden contener lo que querramos, no tiene tipado estatico ()
+- no requiere compilacion
+- mas propenso a errores en tiempo de ejecucion
+- ammplio soporte nativo en navegadores
+
+Typescript ->
+
+- superconjunto de javascript
+- se pueden definir tipos de variables, funciones, objetos, etc.
+- Requiere compilacion a javascript
+- gracias a los tipos:
+  - menos propenso a errores en tiempo de ejecucion
+  - mejor soporte para herramientas de desarrollo (autocompletado, refactorizacion, etc.)
+- Soporte para interfases. enums, tipos personalizados, genericos, etc.
+- Mas escalable y mantenible => gran beneficio en proyectos grandes
