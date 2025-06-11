@@ -1,14 +1,15 @@
-//react-router-dom
+import { lazy } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./components/Login";
-import Dashboard from "./views/Dashboard";
-import Profile from "./views/Profile";
-import Notifications from "./views/Notifications";
 import PublicRoutes from "./components/router/PublicRoutes";
 import ProtectedRoutes from "./components/router/ProtectedRoutes";
-import Layout from "./components/layouts/MainLayout";
+import MainLayout from "./components/layouts/MainLayout";
 
 function App() {
+  const Dashboard = lazy(() => import("./views/Dashboard"));
+  const Notifications = lazy(() => import("./views/Notifications"));
+  const Profile = lazy(() => import("./views/Profile"));
+
   return (
     <BrowserRouter>
       <Routes>
@@ -18,11 +19,10 @@ function App() {
         </Route>
 
         <Route element={<ProtectedRoutes />}>
-          <Route element={<Layout />}>
+          <Route element={<MainLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/notifications" element={<Notifications />} />
-            {/* Agregar acá todas las arutas del menú */}
           </Route>
         </Route>
       </Routes>

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 type LoginProcessResponse = {
@@ -18,6 +18,7 @@ function Login() {
   const passInputRef = useRef<HTMLInputElement>(null);
 
   const [message, setMessage] = useState<string | null>(null);
+  const [newPassword, setNewPassword] = useState("");
 
   const navigate = useNavigate();
 
@@ -54,6 +55,26 @@ function Login() {
       .then((dataObject) => loginProcess(dataObject))
       .catch((error) => console.log("error", error));
   }
+
+  function checkNewPassword(p: any) {
+    //aca voy a checkear si la pass cyuample con lso requisitos minimos
+    const tieneNumero = /\d/.test(p);
+  }
+
+  function handleChangeHola(e: any) {
+    setNewPassword(e.target.value);
+  }
+
+  useEffect(() => {
+    //se ejecuta 2°
+    if (newPassword) checkNewPassword(newPassword);
+    console.log("hola");
+
+    //se ejecuta 1°
+    return () => {
+      console.log("pepito");
+    };
+  }, [newPassword]);
 
   return (
     <div
@@ -97,6 +118,8 @@ function Login() {
               ref={passInputRef}
             />
           </div>
+
+          <input type="text" onChange={handleChangeHola} />
 
           <button type="submit" className="btn btn-primary">
             Submit

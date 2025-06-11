@@ -1,12 +1,15 @@
+import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
-import Navbar from "./Navbar"; // Suponiendo que ya tenés uno creado
+import Navbar from "../layouts/Navbar";
 
 function MainLayout() {
   return (
     <div>
       <Navbar />
       <main>
-        <Outlet />
+        <Suspense fallback={<div>Cargando...</div>}>
+          <Outlet />
+        </Suspense>
       </main>
     </div>
   );
