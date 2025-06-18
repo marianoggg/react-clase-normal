@@ -13,22 +13,21 @@ function Dashboard() {
 
   function mostrar_datos(data: any) {
     console.log("data", data);
-    setData(data);
+    if (!data.message) setData(data);
+    else setData([]);
   }
 
   function get_users_all() {
-    /* const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json"); */
-
     const token =
       "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3NTAyMDMxMjAsImV4cCI6MTc1MDIzMTkyMCwidXNlcm5hbWUiOiJsaW9lc2NhbG9uaSJ9.E8dJhstJGyWta28rhXwzlXigAUENOGEYXdR9N7M63oI";
 
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", `Bearer ${token}`);
+    myHeaders.append("Content-Type", "application/json");
+
     const requestOptions = {
       method: "GET",
-      headers: {
-        authorization: `Bearer ${token}`,
-        "content-type": "application/json",
-      },
+      headers: myHeaders,
     };
 
     fetch(LOGIN_URL, requestOptions)
