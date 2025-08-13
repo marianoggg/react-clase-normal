@@ -1,74 +1,67 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
-function Dashboard() {
-  const userName = JSON.parse(localStorage.getItem("user") || "{}").first_name;
+type Props = {};
 
+type User = {};
+
+function Dashboard({}: Props) {
   const BACKEND_IP = "localhost";
   const BACKEND_PORT = "8000";
-  const ENDPOINT = "users/all";
-  const LOGIN_URL = `http://${BACKEND_IP}:${BACKEND_PORT}/${ENDPOINT}`;
+  const ENDPOINT = "user/paginated";
+  const URL = `http://${BACKEND_IP}:${BACKEND_PORT}/${ENDPOINT}`;
 
-  type User = { username: string; [key: string]: any };
   const [data, setData] = useState<User[]>([]);
+  const [nextCursor, setNextCursor] = useState(0);
 
-  function mostrar_datos(data: any) {
-    console.log("data", data);
-    if (!data.message) setData(data);
-    else setData([]);
-  }
+  async function traeme_datos(
+    limit: number | null,
+    last_seen_id: number | null
+  ) {
+    const token = localStorage.getItem("token");
 
-  function get_users_all() {
-    const token =
-      "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3NTAyMDMxMjAsImV4cCI6MTc1MDIzMTkyMCwidXNlcm5hbWUiOiJsaW9lc2NhbG9uaSJ9.E8dJhstJGyWta28rhXwzlXigAUENOGEYXdR9N7M63oI";
+    console.log("token", token, limit, last_seen_id, nextCursor);
 
-    var myHeaders = new Headers();
-    myHeaders.append("Authorization", `Bearer ${token}`);
-    myHeaders.append("Content-Type", "application/json");
+    try {
+      const res = await fetch(URL, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ limit, last_seen_id }),
+      });
+      const json = await res.json();
 
-    const requestOptions = {
-      method: "GET",
-      headers: myHeaders,
-    };
+      if (json.message) {
+        console.error("Error:", json.message);
+        return;
+      }
 
-    fetch(LOGIN_URL, requestOptions)
-      .then((respond) => respond.json())
-      .then((data) => mostrar_datos(data))
-      .catch((error) => console.log("error", error));
+      if (!last_seen_id) {
+        setData(json.users);
+      } else {
+        setData((pepito) => [...pepito, ...json.users]);
+      }
+
+      setNextCursor(json.next_cursor);
+    } catch (error) {
+      console.error("Fetch error:", error);
+    }
   }
 
   useEffect(() => {
-    get_users_all();
+    traeme_datos(20, 0);
   }, []);
 
-  return (
-    <div>
-      <h2>Dashboard</h2>
-      <div>Bienvenido {userName}!</div>
-      <table className="table-primary">
-        <thead>
-          <td>NOMRBE</td>
-          <td>APELLIDO</td>
-          <td>TIPO</td>
-          <td>EMAIL</td>
-        </thead>
-        <tbody>
-          {data.map((pepe) => {
-            return (
-              <tr key={pepe.id}>
-                <td>{pepe.first_name}</td>
-                <td>{pepe.last_name}</td>
-                <td>{pepe.type}</td>
-                <td>{pepe.email}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      <div>
-        <button onClick={get_users_all}>Recargar datos</button>
-      </div>
-    </div>
-  );
+  function Mostrar_datos() {
+    //motor
+    //carroseria
+    return data.map((el: any) => {
+      return <div>{el.first_name}</div>;
+    });
+  }
+
+  return <div>{data && <Mostrar_datos />}</div>;
 }
 
 export default Dashboard;
