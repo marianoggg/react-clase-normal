@@ -55,7 +55,7 @@ function Dashboard({}: Props) {
 
   function Mostrar_datos() {
     //motor
-    //carroseria
+    //carroceria
     return data.map((el: any) => {
       return <div>{el.first_name}</div>;
     });

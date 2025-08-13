@@ -98,8 +98,7 @@ function Dashboard() {
 
   return (
     <div>
-      <h2>Dashboard</h2>
-      <div>Bienvenido {userName}!</div>
+      <h2>Infinite scroll simple</h2>
 
       {/* Contenedor con scroll y altura fija */}
       <div

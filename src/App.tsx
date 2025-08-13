@@ -6,8 +6,8 @@ import ProtectedRoutes from "./components/router/ProtectedRoutes";
 import MainLayout from "./components/layouts/MainLayout";
 
 function App() {
-  const Dashboard = lazy(() => import("./views/Dashboard"));
-  const Notifications = lazy(() => import("./views/Notifications"));
+  const Dashboard = lazy(() => import("./views/Infinite_scroll"));
+  const Notifications = lazy(() => import("./views/Virtualizado"));
   const Profile = lazy(() => import("./views/Profile"));
 
   return (

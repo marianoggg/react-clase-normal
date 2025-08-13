@@ -21,13 +21,13 @@ type User = {
   [key: string]: any;
 };
 
-function Dashboard() {
+function Notifications() {
   const userName =
     JSON.parse(localStorage.getItem("user") || "{}").first_name || "Usuario";
 
   const BACKEND_IP = "localhost";
   const BACKEND_PORT = "8000";
-  const ENDPOINT = "users/paginated";
+  const ENDPOINT = "user/paginated";
   const URL = `http://${BACKEND_IP}:${BACKEND_PORT}/${ENDPOINT}`;
 
   const [data, setData] = useState<User[]>([]);
@@ -141,8 +141,7 @@ function Dashboard() {
 
   return (
     <div style={{ padding: 20 }}>
-      <h2>Dashboard</h2>
-      <div>Bienvenido {userName}!</div>
+      <h2>Infinite Virtualizado</h2>
 
       <div
         style={{
@@ -196,4 +195,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default Notifications;

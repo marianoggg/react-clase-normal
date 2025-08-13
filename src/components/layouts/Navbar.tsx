@@ -13,13 +13,13 @@ function Navbar() {
         style={{ marginRight: "1rem" }}
         title="Dashboard"
       >
-        Dashboard
+        Infinite simple
       </NavLink>
       <NavLink to="/profile" style={{ marginRight: "1rem" }}>
         Profile
       </NavLink>
       <NavLink to="/notifications" style={{ marginRight: "1rem" }}>
-        notifications
+        Inf.Sc. Virtualizado
       </NavLink>
       <NavLink to="/login" onClick={handleLogout}>
         Logout
