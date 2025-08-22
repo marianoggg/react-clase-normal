@@ -7,8 +7,7 @@ import MainLayout from "./components/layouts/MainLayout";
 
 function App() {
   const Dashboard = lazy(() => import("./views/Infinite_scroll"));
-  const Notifications = lazy(() => import("./views/Virtualizado"));
-  const Profile = lazy(() => import("./views/Profile"));
+  const Virtualizado = lazy(() => import("./views/Virtualizado"));
 
   return (
     <BrowserRouter>
@@ -21,8 +20,7 @@ function App() {
         <Route element={<ProtectedRoutes />}>
           <Route element={<MainLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/virtualizado" element={<Virtualizado />} />
           </Route>
         </Route>
       </Routes>

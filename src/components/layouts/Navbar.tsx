@@ -15,11 +15,9 @@ function Navbar() {
       >
         Infinite simple
       </NavLink>
-      <NavLink to="/profile" style={{ marginRight: "1rem" }}>
-        Profile
-      </NavLink>
-      <NavLink to="/notifications" style={{ marginRight: "1rem" }}>
-        Inf.Sc. Virtualizado
+
+      <NavLink to="/virtualizado" style={{ marginRight: "1rem" }}>
+        Infinite Virtualizado
       </NavLink>
       <NavLink to="/login" onClick={handleLogout}>
         Logout
