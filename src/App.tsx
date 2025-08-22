@@ -6,7 +6,7 @@ import ProtectedRoutes from "./components/router/ProtectedRoutes";
 import MainLayout from "./components/layouts/MainLayout";
 
 function App() {
-  const Dashboard = lazy(() => import("./views/Infinite_scroll"));
+  const Nativo = lazy(() => import("./views/Nativo"));
   const Virtualizado = lazy(() => import("./views/Virtualizado"));
 
   return (
@@ -19,7 +19,7 @@ function App() {
 
         <Route element={<ProtectedRoutes />}>
           <Route element={<MainLayout />}>
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/nativo" element={<Nativo />} />
             <Route path="/virtualizado" element={<Virtualizado />} />
           </Route>
         </Route>

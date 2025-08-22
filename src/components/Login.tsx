@@ -27,7 +27,7 @@ function Login() {
       localStorage.setItem("token", dataObject.token ?? "");
       localStorage.setItem("user", JSON.stringify(dataObject.user));
       setMessage("Initiating session...");
-      navigate("/dashboard");
+      navigate("/nativo");
     } else {
       setMessage(dataObject.message ?? "Unknown error");
     }

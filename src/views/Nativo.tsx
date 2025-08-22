@@ -10,7 +10,7 @@ type User = {
   [key: string]: any;
 };
 
-function Dashboard() {
+function Nativo() {
   return (
     <div>
       <h2>Infinite scroll simple</h2>
@@ -18,4 +18,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default Nativo;
