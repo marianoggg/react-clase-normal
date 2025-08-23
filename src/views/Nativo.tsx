@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type User = {
   id: number;
@@ -11,33 +11,25 @@ type User = {
 };
 
 function Nativo() {
-  //Motor
+  const BACKEND_IP = "localhost";
+  const BACKEND_PORT = "8000";
+  const ENDPOINT = "user/paginated";
+  const URL = `http://${BACKEND_IP}:${BACKEND_PORT}/${ENDPOINT}`;
 
-  //#region Hooks
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  const [loading, setLoading] = useState(false);
   const [data, setData] = useState<User[]>([]);
   const [nextCursor, setNextCursor] = useState<number | null>(0);
 
-  //#endregion
+  const loadingRef = useRef(false);
 
-  //#region Functions
   async function getUsersPag(limit: number, last_seen_id: number | null) {
-    console.log("aca tenes los datos");
     const token = localStorage.getItem("token");
+    if (!token) return;
 
-    if (!token) {
-      console.error("No token found!");
-      return;
-    }
-
-    if (loading) return;
-
-    setLoading(true);
+    if (loadingRef.current) return;
+    loadingRef.current = true;
 
     try {
-      const res = await fetch("http://localhost:8000/user/paginated", {
+      const res = await fetch(URL, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -47,26 +39,36 @@ function Nativo() {
       });
 
       const json = await res.json();
-
       if (json.message) {
         console.error("Error:", json.message);
-        setLoading(false);
         return;
       }
 
-      if (!last_seen_id) setData(json.users);
-      else setData((prev) => [...prev, ...json.users]);
+      //funcion que devuelve los datos a setear en data segun el last_seen_id
+      const pepe = (prev: any) => {
+        if (!last_seen_id) return json.users;
+        else return [...prev, ...json.users];
+      };
+
+      setData(pepe);
 
       setNextCursor(json.next_cursor);
-    } catch (error) {
-      console.error("Fetch error:", error);
+    } catch (err) {
+      console.error("Fetch error:", err);
     } finally {
-      setLoading(false);
+      loadingRef.current = false;
     }
   }
 
+  useEffect(() => {
+    getUsersPag(20, 0);
+  }, []);
+
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
   function handleScroll() {
-    if (!scrollContainerRef.current || loading) return;
+    if (!scrollContainerRef.current || loadingRef.current || !nextCursor)
+      return;
 
     const {
       scrollTop,
@@ -74,60 +76,81 @@ function Nativo() {
       clientHeight,
     } = scrollContainerRef.current;
 
-    if (scrollHeight - scrollTop - clientHeight < 100)
+    if (scrollHeight - scrollTop - clientHeight < 100) {
       getUsersPag(20, nextCursor);
+    }
   }
 
-  //#endregion
-
-  //#region Effects
-
-  useEffect(() => {
-    console.log("data", data);
-  }, [data]);
-
-  useEffect(() => {
-    getUsersPag(20, 0);
-  }, []);
-
-  //#endregion
-
-  //carroceria
   return (
-    <div
-      ref={scrollContainerRef}
-      style={{
-        height: 400,
-        border: "1px solid #ccc",
-        marginTop: 10,
-        overflowY: "auto",
-      }}
-      onScroll={handleScroll}
-    >
-      <h2>Infinite scroll simple</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Apellido</th>
-            <th>Tipo</th>
-            <th>Email</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((user) => {
-            //motor
+    <div>
+      <h2>Nativo</h2>
 
-            //carroceria
-            return (
-              <tr>
-                <td>{user.first_name}</td> <td>{user.last_name}</td>{" "}
-                <td>{user.type}</td> <td>{user.email}</td>
+      <div
+        ref={scrollContainerRef}
+        onScroll={handleScroll}
+        style={{
+          height: 400,
+          overflowY: "auto",
+          border: "1px solid #ccc",
+          marginTop: 10,
+        }}
+      >
+        <table
+          className="table-primary"
+          style={{ width: "100%", borderCollapse: "collapse" }}
+        >
+          <thead>
+            <tr>
+              <th>NOMBRE</th>
+              <th>APELLIDO</th>
+              <th>TIPO</th>
+              <th>EMAIL</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((user) => (
+              <tr key={user.id}>
+                <td>{user.first_name}</td>
+                <td>{user.last_name}</td>
+                <td>{user.type}</td>
+                <td>{user.email}</td>
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            ))}
+          </tbody>
+        </table>
+
+        {/* usamos directamente loadingRef.current para la UI */}
+        {loadingRef.current && (
+          <div style={{ textAlign: "center", padding: "10px" }}>
+            Cargando...
+          </div>
+        )}
+        {!nextCursor && !loadingRef.current && (
+          <div style={{ textAlign: "center", padding: "10px" }}>
+            No hay más usuarios
+          </div>
+        )}
+      </div>
+
+      <div style={{ marginTop: 20 }}>
+        <button
+          onClick={() => getUsersPag(20, nextCursor ?? 0)}
+          disabled={loadingRef.current || !nextCursor}
+        >
+          {loadingRef.current
+            ? "Cargando..."
+            : nextCursor
+            ? "Cargar más"
+            : "No hay más usuarios"}
+        </button>
+        <button
+          onClick={() => getUsersPag(20, 0)}
+          disabled={loadingRef.current}
+          style={{ marginLeft: 10 }}
+        >
+          Recargar datos
+        </button>
+      </div>
     </div>
   );
 }
