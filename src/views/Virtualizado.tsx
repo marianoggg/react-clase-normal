@@ -21,7 +21,7 @@ type User = {
   [key: string]: any;
 };
 
-function Notifications() {
+function Virtualizado() {
   
   return (
     <div style={{ padding: 20 }}>
@@ -31,4 +31,4 @@ function Notifications() {
   );
 }
 
-export default Notifications;
+export default Virtualizado;
