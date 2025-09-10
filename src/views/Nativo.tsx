@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import DataView from "../components/Tables/DataView";
 
 type User = {
   id: number;
@@ -11,21 +12,28 @@ type User = {
 };
 
 function Nativo() {
+  //#region Constants
   const BACKEND_IP = "localhost";
   const BACKEND_PORT = "8000";
   const ENDPOINT = "user/paginated";
   const URL = `http://${BACKEND_IP}:${BACKEND_PORT}/${ENDPOINT}`;
+  //#endregion
 
+  //#region Hooks
   const [data, setData] = useState<User[]>([]);
   const [nextCursor, setNextCursor] = useState<number | null>(0);
 
-  const loadingRef = useRef(false);
+  const loadingRef = useRef<boolean>(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  //#endregion
 
+  //#region Functions
   async function getUsersPag(limit: number, last_seen_id: number | null) {
     const token = localStorage.getItem("token");
     if (!token) return;
 
     if (loadingRef.current) return;
+
     loadingRef.current = true;
 
     try {
@@ -60,12 +68,6 @@ function Nativo() {
     }
   }
 
-  useEffect(() => {
-    getUsersPag(20, 0);
-  }, []);
-
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-
   function handleScroll() {
     if (!scrollContainerRef.current || loadingRef.current || !nextCursor)
       return;
@@ -81,6 +83,16 @@ function Nativo() {
     }
   }
 
+  //#endregion
+
+  //#region Effects
+
+  useEffect(() => {
+    getUsersPag(20, 0);
+  }, []);
+
+  //#endregion
+
   return (
     <div>
       <h2>Nativo</h2>
@@ -95,29 +107,7 @@ function Nativo() {
           marginTop: 10,
         }}
       >
-        <table
-          className="table-primary"
-          style={{ width: "100%", borderCollapse: "collapse" }}
-        >
-          <thead>
-            <tr>
-              <th>NOMBRE</th>
-              <th>APELLIDO</th>
-              <th>TIPO</th>
-              <th>EMAIL</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((user) => (
-              <tr key={user.id}>
-                <td>{user.first_name}</td>
-                <td>{user.last_name}</td>
-                <td>{user.type}</td>
-                <td>{user.email}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <DataView data={data} nextCursor={nextCursor} />
 
         {/* usamos directamente loadingRef.current para la UI */}
         {loadingRef.current && (
