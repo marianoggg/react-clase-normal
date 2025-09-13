@@ -15,6 +15,11 @@ function Navbar() {
       <NavLink to="/virtualizado" style={{ marginRight: "1rem" }}>
         Infinite Virtualizado
       </NavLink>
+
+      <NavLink to="/select" style={{ marginRight: "1rem" }}>
+        Selects
+      </NavLink>
+
       <NavLink to="/login" onClick={handleLogout}>
         Logout
       </NavLink>

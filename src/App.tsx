@@ -8,6 +8,7 @@ import MainLayout from "./components/layouts/MainLayout";
 function App() {
   const Nativo = lazy(() => import("./views/Nativo"));
   const Virtualizado = lazy(() => import("./views/Virtualizado"));
+  const Select = lazy(() => import("./views/Select"));
 
   return (
     <BrowserRouter>
@@ -21,6 +22,7 @@ function App() {
           <Route element={<MainLayout />}>
             <Route path="/nativo" element={<Nativo />} />
             <Route path="/virtualizado" element={<Virtualizado />} />
+            <Route path="/select" element={<Select />} />
           </Route>
         </Route>
       </Routes>
