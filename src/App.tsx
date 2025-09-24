@@ -9,6 +9,9 @@ function App() {
   const Nativo = lazy(() => import("./views/Nativo"));
   const Virtualizado = lazy(() => import("./views/Virtualizado"));
   const Select = lazy(() => import("./views/Select"));
+  const TanStackReactTable_simple = lazy(
+    () => import("./views/TanStackReactTable_simple")
+  );
 
   return (
     <BrowserRouter>
@@ -23,6 +26,10 @@ function App() {
             <Route path="/nativo" element={<Nativo />} />
             <Route path="/virtualizado" element={<Virtualizado />} />
             <Route path="/select" element={<Select />} />
+            <Route
+              path="/tanStackReactTable_simple"
+              element={<TanStackReactTable_simple />}
+            />
           </Route>
         </Route>
       </Routes>

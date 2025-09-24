@@ -20,6 +20,10 @@ function Navbar() {
         Selects
       </NavLink>
 
+      <NavLink to="/tanStackReactTable_simple" style={{ marginRight: "1rem" }}>
+        TanStackRT_simple
+      </NavLink>
+
       <NavLink to="/login" onClick={handleLogout}>
         Logout
       </NavLink>
