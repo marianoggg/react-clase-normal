@@ -5,6 +5,7 @@ import {
 } from "../components/Selects/NativeSelect/NativeSelect";
 import VehicleReactSelect from "../components/Selects/ReactSelect/VehicleReactSelect";
 import UsersReactSelect from "../components/Selects/ReactSelect/UsersReactSelect";
+import UsersReactSelectBkSearch from "../components/Selects/ReactSelect/UsersReactSelectBkSearch";
 
 type Props = {};
 
@@ -12,8 +13,15 @@ function Select({}: Props) {
   return (
     <>
       <div className="m-5 p-3 border rounded">
-        <h5>Users React select</h5>
+        <h4>Users React select</h4>
+        <h6>Search en Frontend (no recomendado)</h6>
         <UsersReactSelect />
+      </div>
+
+      <div className="m-5 p-3 border rounded">
+        <h4>Users React select</h4>
+        <h6>Search en backend</h6>
+        <UsersReactSelectBkSearch />
       </div>
 
       <div className="m-5 p-3 border rounded">

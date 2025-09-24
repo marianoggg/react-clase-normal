@@ -11,10 +11,10 @@ type User = {
   pepito: string;
 };
 
-function UsersReactSelect({}: Props) {
+function UsersReactSelectBkSearch({}: Props) {
   const BACKEND_IP = "localhost";
   const BACKEND_PORT = "8000";
-  const ENDPOINT = "user/paginated/filtered-sync";
+  const ENDPOINT = "user/paginated/filtered-search-sync";
   const URL = `http://${BACKEND_IP}:${BACKEND_PORT}/${ENDPOINT}`;
 
   const [value, setValue] = useState<any>(null);
@@ -39,6 +39,7 @@ function UsersReactSelect({}: Props) {
         body: JSON.stringify({
           limit: 50,
           last_seen_id: cursor,
+          search,
         }),
       });
       const obj = await res.json();
@@ -48,16 +49,10 @@ function UsersReactSelect({}: Props) {
         return { options: [], hasMore: false, additional: { cursor } };
       }
 
-      // Filtrado local sobre first_name, last_name y email
-      const filtered = obj.users.filter((user: User) =>
-        `${user.first_name} ${user.last_name} ${user.email}`
-          .toLowerCase()
-          .includes(search.toLowerCase())
-      );
       return {
-        options: filtered.map((user: User) => ({
+        options: obj.users.map((user: User) => ({
           value: user.id,
-          label: `${user.first_name} ${user.last_name} -> [[${user.email}]]`,
+          label: `${user.first_name} ${user.last_name} (${user.email})`,
         })),
         hasMore: Boolean(obj.next_cursor),
         additional: { cursor: obj.next_cursor ?? 0 },
@@ -71,7 +66,6 @@ function UsersReactSelect({}: Props) {
   useEffect(() => {
     console.log("value", value);
   }, [value]);
-
   return (
     <div style={{ padding: 20, maxWidth: 500 }}>
       <h2>Usuarios</h2>
@@ -89,4 +83,4 @@ function UsersReactSelect({}: Props) {
   );
 }
 
-export default UsersReactSelect;
+export default UsersReactSelectBkSearch;
