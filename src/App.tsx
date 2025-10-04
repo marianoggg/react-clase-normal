@@ -12,6 +12,9 @@ function App() {
   const TanStackReactTable_simple = lazy(
     () => import("./views/TanStackReactTable_simple")
   );
+  const TanStackReactTableUser = lazy(
+    () => import("./views/TanStackReactTable_users")
+  );
 
   return (
     <BrowserRouter>
@@ -29,6 +32,10 @@ function App() {
             <Route
               path="/tanStackReactTable_simple"
               element={<TanStackReactTable_simple />}
+            />
+            <Route
+              path="/tanStackReactTable_users"
+              element={<TanStackReactTableUser />}
             />
           </Route>
         </Route>

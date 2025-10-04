@@ -13,7 +13,7 @@ type Person = {
 };
 
 const defaultData: Person[] = [
-  { name: "Juan1", age: 32 },
+  { name: "Juan11", age: 32 },
   { name: "Juan2", age: 33 },
   { name: "Juan3", age: 34 },
   { name: "Juan4", age: 35 },
@@ -37,6 +37,7 @@ const defaultColumns = [
 ];
 
 function TanStackReactTable_simple({}: Props) {
+  //motor
   const table = useReactTable({
     data: defaultData,
     columns: defaultColumns,
@@ -44,16 +45,19 @@ function TanStackReactTable_simple({}: Props) {
   });
 
   useEffect(() => {
-    console.log("table", table);
+    console.log("table--", table.getRowModel().rows[1].getVisibleCells());
   }, [table]);
 
+  //ui
   return (
     <table>
       <thead>
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
             {headerGroup.headers.map((header) => (
-              <th>{header.column.columnDef.header as string}</th>
+              <th key={header.id}>
+                {header.column.columnDef.header as string}
+              </th>
             ))}
           </tr>
         ))}
