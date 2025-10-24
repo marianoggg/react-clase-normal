@@ -8,15 +8,8 @@ import {
   type ColumnDef,
 } from "@tanstack/react-table";
 import { useVirtualizer, type VirtualItem } from "@tanstack/react-virtual";
-
-type User = {
-  id: number;
-  username: string;
-  first_name: string;
-  last_name: string;
-  type: string;
-  email: string;
-};
+import { useFetchUsers, useSearch } from "../hooks/users.hook";
+import { PageSizeSelector } from "../components/common/PageSizeSelector";
 
 type Props = {};
 
@@ -46,24 +39,29 @@ const defaultColumns = [
 
 function TanStackReactTableUsers({}: Props) {
   //logica
-
   const BACKEND_IP = "localhost";
   const BACKEND_PORT = "8000";
   const ENDPOINT = "user/paginated/filtered-sync";
   const URL = `http://${BACKEND_IP}:${BACKEND_PORT}/${ENDPOINT}`;
 
+  //#region States
   const [globalFilter, setGlobalFilter] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [data, setData] = useState<User[]>([]);
-  const [nextCursor, setNextCursor] = useState<number | null>(null);
-  const [cursor, setCursor] = useState<number>(0);
   const [previousCursors, setPreviousCursors] = useState<number[]>([]);
+  const [pageSize, setPageSize] = useState(20);
+  //#endregion States
 
+  //#region Hooks
   const tableContainerRef = useRef<HTMLDivElement>(null);
-
+  const { search, setSearch } = useSearch(() => fetchUsers(0));
+  const { isLoading, data, nextCursor, fetchUsers } = useFetchUsers({
+    url: URL,
+    search: search,
+    pageSize: pageSize,
+    setPreviousCursors: setPreviousCursors,
+  });
   const table = useReactTable({
-    data: data,
-    columns: defaultColumns,
+    data: data, //<---- entran los datos
+    columns: defaultColumns, // <--- columnas
     state: {
       globalFilter,
     },
@@ -71,75 +69,36 @@ function TanStackReactTableUsers({}: Props) {
     getFilteredRowModel: getFilteredRowModel(),
     onGlobalFilterChange: setGlobalFilter,
   });
+  //#endregion Hooks
 
   const { rows } = table.getRowModel();
 
-  const rowVirtualized = useVirtualizer({
+  const rowVirtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => tableContainerRef.current,
     estimateSize: () => 60,
     overscan: 10,
   });
 
-  const virtualRows = rowVirtualized.getVirtualItems();
+  const virtualRows = rowVirtualizer.getVirtualItems();
 
-  const fetchUsers = async (
-    cursorId: number = 0,
-    isGoingBack: boolean = false
-  ) => {
-    setIsLoading(true);
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setIsLoading(false);
-      return;
-    }
+  const totalSize = rowVirtualizer.getTotalSize();
 
-    try {
-      const res = await fetch(URL, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          limit: 20,
-          last_seen_id: cursorId,
-        }),
-      });
-
-      const obj = await res.json();
-
-      if (obj.message) {
-        console.log(
-          "Error obj traido del backend (trayendo usuarios) -->",
-          obj.message
-        );
-        return;
-      }
-
-      setData(obj.users);
-      setNextCursor(obj.next_cursor ?? null);
-
-      if (!isGoingBack && cursorId !== 0) {
-        setPreviousCursors((prev) => [...prev, cursor]);
-      }
-
-      setCursor(cursorId);
-    } catch (error) {
-      console.error("Fetch error al traer usuarios -> ", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const paddingTop = virtualRows.length > 0 ? virtualRows[0]?.start || 0 : 0;
+  const paddingBottom =
+    virtualRows.length > 0
+      ? totalSize - (virtualRows[virtualRows.length - 1]?.end || 0)
+      : 0;
 
   const handleNext = () => {
     if (nextCursor !== null) {
       fetchUsers(nextCursor);
     }
   };
+
   const handlePrev = () => {
     if (previousCursors.length > 0) {
-      const prevCur = previousCursors[previousCursors.length - 1];
+      const prevCur = previousCursors[previousCursors.length - 1]; //ultimo elem. del array
       const newPreviousCursors = previousCursors.slice(0, -1);
       setPreviousCursors(newPreviousCursors);
       console.log("prevCur", prevCur, previousCursors, newPreviousCursors);
@@ -147,9 +106,18 @@ function TanStackReactTableUsers({}: Props) {
     }
   };
 
-  /*  previousCursor -> [0,20,40,60,80]
+  const handleChangePageSize = (newSize: number) => {
+    setPageSize(newSize);
+  };
 
-  previousCursors -> [0,20,40,60] */
+  useEffect(() => {
+    console.log("pageSize", pageSize);
+    fetchUsers(0);
+  }, [pageSize]);
+
+  useEffect(() => {
+    console.log("data.length", data.length);
+  }, [data]);
 
   useEffect(() => {
     fetchUsers(0);
@@ -157,12 +125,31 @@ function TanStackReactTableUsers({}: Props) {
 
   //ui
   return (
-    <div>
+    <div className="m-4 ms-5" style={{ padding: 20, maxWidth: 1200 }}>
       <h2>Usuarios - TanStack Table con Virtualización</h2>
+      {/* Search */}
+      <div className="mb-3">
+        <input
+          type="text"
+          name="inputSearch"
+          placeholder="Buscar por nombre, apellaido o email..."
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
 
       {/* Tabla con vistualización */}
-      <div ref={tableContainerRef}>
-        <table>
+      <div
+        ref={tableContainerRef}
+        style={{
+          height: "600px",
+          overflow: "auto",
+          border: "1px solid #ddd",
+          borderRadius: "4px",
+          marginBottom: "20px",
+          position: "relative",
+        }}
+      >
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
@@ -175,32 +162,70 @@ function TanStackReactTableUsers({}: Props) {
             ))}
           </thead>
           <tbody>
+            {paddingTop > 0 && (
+              <tr>
+                <td style={{ height: `${paddingTop}px` }} />
+              </tr>
+            )}
             {virtualRows.map((virtualRow: VirtualItem) => {
               //logica
               const row = rows[virtualRow.index] as Row<any>;
 
               //ui
               return (
-                <tr key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </td>
-                  ))}
+                <tr
+                  key={row.id}
+                  style={{
+                    borderBottom: "1px solid #eee",
+                    backgroundColor: "white",
+                    height: "60px",
+                  }}
+                >
+                  {row.getVisibleCells().map((cell: any) => {
+                    return (
+                      <td
+                        key={cell.id}
+                        style={{
+                          padding: "12px",
+                        }}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </td>
+                    );
+                  })}
                 </tr>
               );
             })}
+            {paddingBottom > 0 && (
+              <tr>
+                <td style={{ height: `${paddingBottom}px` }} />
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
 
       {/* Controles de paginacion */}
-      <div>
-        <button onClick={handlePrev}>Anterior</button>
-        <button onClick={handleNext}>Siguiente</button>
+      <div className="d-flex justify-content-between mt-4">
+        <div>
+          <button onClick={handlePrev} disabled={isLoading}>
+            Anterior
+          </button>
+          <button onClick={handleNext} disabled={isLoading}>
+            Siguiente
+          </button>
+        </div>
+
+        <div>
+          {/* Control de paginacion */}
+          <PageSizeSelector
+            onChangePage={handleChangePageSize}
+            pageSize={pageSize}
+          />
+        </div>
       </div>
     </div>
   );
