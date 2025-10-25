@@ -10,6 +10,7 @@ import {
 import { useVirtualizer, type VirtualItem } from "@tanstack/react-virtual";
 import { useFetchUsers, useSearch } from "../hooks/users.hook";
 import { PageSizeSelector } from "../components/common/PageSizeSelector";
+import DetallesBtnStateModal from "../components/Tables/modals/detallesBtnStateModal";
 
 type Props = {};
 
@@ -48,6 +49,9 @@ function TanStackReactTableUsers({}: Props) {
   const [globalFilter, setGlobalFilter] = useState("");
   const [previousCursors, setPreviousCursors] = useState<number[]>([]);
   const [pageSize, setPageSize] = useState(20);
+  const [btnState, setBtnState] = useState("btn-danger");
+  const [show, setShow] = useState(false);
+
   //#endregion States
 
   //#region Hooks
@@ -90,6 +94,8 @@ function TanStackReactTableUsers({}: Props) {
       ? totalSize - (virtualRows[virtualRows.length - 1]?.end || 0)
       : 0;
 
+  //#region Functions
+
   const handleNext = () => {
     if (nextCursor !== null) {
       fetchUsers(nextCursor);
@@ -109,6 +115,18 @@ function TanStackReactTableUsers({}: Props) {
   const handleChangePageSize = (newSize: number) => {
     setPageSize(newSize);
   };
+
+  const handleBtnState = () => {
+    setTimeout(() => {
+      setBtnState((prev) => {
+        console.log("prev", prev);
+        if (prev == "btn-danger") return "btn-success";
+        else return "btn-danger";
+      });
+      setShow(true);
+    }, 100);
+  };
+  //#endregion Functions
 
   useEffect(() => {
     console.log("pageSize", pageSize);
@@ -217,6 +235,9 @@ function TanStackReactTableUsers({}: Props) {
           <button onClick={handleNext} disabled={isLoading}>
             Siguiente
           </button>
+          <button className={`btn ${btnState}`} onClick={handleBtnState}>
+            {btnState == "btn-success" ? "Soy verde" : "Cambiame a verde"}
+          </button>
         </div>
 
         <div>
@@ -227,6 +248,7 @@ function TanStackReactTableUsers({}: Props) {
           />
         </div>
       </div>
+      <DetallesBtnStateModal show={show} setShow={setShow} />
     </div>
   );
 }
