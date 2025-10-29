@@ -28,6 +28,10 @@ function Navbar() {
         TanStackRT_users
       </NavLink>
 
+      <NavLink to="/pruebasEffect" style={{ marginRight: "1rem" }}>
+        PruebasEffect
+      </NavLink>
+
       <NavLink to="/login" onClick={handleLogout}>
         Logout
       </NavLink>
