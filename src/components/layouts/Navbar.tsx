@@ -32,6 +32,10 @@ function Navbar() {
         PruebasEffect
       </NavLink>
 
+      <NavLink to="/userDetailForm" style={{ marginRight: "1rem" }}>
+        UserDetailForm
+      </NavLink>
+
       <NavLink to="/login" onClick={handleLogout}>
         Logout
       </NavLink>
