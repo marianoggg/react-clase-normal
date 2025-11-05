@@ -13,6 +13,32 @@ interface IFormInput {
 }
 
 function FormExample() {
+  const pepe = false;
+  const hola = pepe && "valor por defecto";
+  console.log("hola", hola);
+
+  /* 
+  
+  truthy -> 
+  "hola"
+  42
+  []
+  {}
+  true
+  "false"
+
+  falsy -> 
+  false     --> boolean
+  0         --> number
+  -0        --> number
+  0n        --> bigInt
+  ""        --> string
+  null      --> nulo
+  undefined --> indefinido
+  Nan       --> not a number
+  
+  */
+
   const [validated, setValidated] = useState(false);
   const {
     handleSubmit,

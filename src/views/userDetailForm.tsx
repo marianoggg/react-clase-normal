@@ -25,7 +25,7 @@ function userDetailForm({}: Props) {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div>
-        <label>First name: </label>
+        <label>First name:: </label>
         <input
           {...register("firstName", { required: "First name es requerido." })}
         />
@@ -60,3 +60,35 @@ function userDetailForm({}: Props) {
 }
 
 export default userDetailForm;
+
+/*
+
+const hola = {key1:"hola" , key2:"que"}
+
+const chau = {...hola, key2:"tal"} 
+
+chau -> {key1:"hola" , key2:"tal"}
+
+const valorPagado = 0;
+
+(pasa algo que puede transformar valorPagado)
+
+if(!!valorPagago) console.log("pagado");
+
+<=>
+
+if(!Boolean(valorPagado)) console.log("No pagado");
+
+0 => Boolean(valorPagado) = !!valorPagago es false => !Boolean(valorPagado) es true
+1500 => Boolean(valorPagado) es true => !Boolean(valorPagado) es false
+
+
+Boolean(valorPagado) = !!valorPagago
+
+!Boolean(valorPagado) = !!!valorPagago
+
+
+
+
+
+*/
